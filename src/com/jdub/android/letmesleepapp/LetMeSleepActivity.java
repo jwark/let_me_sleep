@@ -96,10 +96,11 @@ public class LetMeSleepActivity extends Activity {
         int text;
         if (isSleeping()) {
             text = R.string.going_to_sleep;
-            setSleepingStatusBarNotification();
+            setSleepingStatusBarNotification(true);
             setFlightMode(true);
             setSilentMode(true);
         } else {
+            setSleepingStatusBarNotification(false);
             text = R.string.waking_up;
             setFlightMode(false);
             setSilentMode(false);
@@ -128,22 +129,25 @@ public class LetMeSleepActivity extends Activity {
         Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
     }
 
-    private void setSleepingStatusBarNotification() {
+    private void setSleepingStatusBarNotification(boolean on) {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
-
-        CharSequence notificationTitle = "Now sleeping";
-        CharSequence notificationText = "...zzzzzzz";
         final int SLEEPING_NOTIFICATION = 100;
+        if (on) {
+            CharSequence notificationTitle = "Now sleeping";
+            CharSequence notificationText = "...zzzzzzz";
 
-        Intent notificationIntent = new Intent(this, LetMeSleepActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+            Intent notificationIntent = new Intent(this, LetMeSleepActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-        Notification notification = new Notification();
-        notification.setLatestEventInfo(this, notificationTitle, notificationText, contentIntent);
-        notification.when = System.currentTimeMillis();
-        notification.icon = android.R.drawable.ic_notification_clear_all;
-        notificationManager.notify(SLEEPING_NOTIFICATION, notification);
+            Notification notification = new Notification();
+            notification.setLatestEventInfo(this, notificationTitle, notificationText, contentIntent);
+            notification.when = System.currentTimeMillis();
+            notification.icon = android.R.drawable.ic_notification_clear_all;
+            notificationManager.notify(SLEEPING_NOTIFICATION, notification);
+        } else {
+            notificationManager.cancel(SLEEPING_NOTIFICATION);
+        }
     }
 
 }
