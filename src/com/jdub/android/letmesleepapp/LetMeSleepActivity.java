@@ -1,8 +1,14 @@
 package com.jdub.android.letmesleepapp;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -81,15 +87,63 @@ public class LetMeSleepActivity extends Activity {
     OnClickListener mSleepListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            setSleeping(!isSleeping());
-            int text;
-            if (isSleeping()) {
-                text = R.string.going_to_sleep;
-            } else {
-                text = R.string.waking_up;
-            }
-            Toast toast = Toast.makeText(activity, text, Toast.LENGTH_LONG);
-            toast.show();
+            toggleSleeping();
         }
     };
+
+    private void toggleSleeping() {
+        setSleeping(!isSleeping());
+        int text;
+        if (isSleeping()) {
+            text = R.string.going_to_sleep;
+            setSleepingStatusBarNotification();
+            setFlightMode(true);
+            setSilentMode(true);
+        } else {
+            text = R.string.waking_up;
+            setFlightMode(false);
+            setSilentMode(false);
+        }
+        Toast toast = Toast.makeText(activity, text, Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    private String onOrOffText(boolean on) {
+        return on ? "on" : "off";
+    }
+    private void setFlightMode(boolean on) {
+        Intent am = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        am.putExtra("state", on);
+        this.sendBroadcast(am);
+        Toast.makeText(activity, "Turning flight mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setSilentMode(boolean on) {
+        AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+        if (on) {
+            am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+        } else {
+            am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        }
+        Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setSleepingStatusBarNotification() {
+        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationManager notificationManager = (NotificationManager) getSystemService(ns);
+
+        CharSequence notificationTitle = "Now sleeping";
+        CharSequence notificationText = "...zzzzzzz";
+        final int SLEEPING_NOTIFICATION = 100;
+
+        Intent notificationIntent = new Intent(this, LetMeSleepActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        Notification notification = new Notification();
+        notification.setLatestEventInfo(this, notificationTitle, notificationText, contentIntent);
+        notification.when = System.currentTimeMillis();
+        notification.icon = android.R.drawable.ic_notification_clear_all;
+        notificationManager.notify(SLEEPING_NOTIFICATION, notification);
+    }
+
 }
