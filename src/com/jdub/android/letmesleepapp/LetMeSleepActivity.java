@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -112,12 +113,6 @@ public class LetMeSleepActivity extends Activity {
     private String onOrOffText(boolean on) {
         return on ? "on" : "off";
     }
-    private void setFlightMode(boolean on) {
-        Intent am = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
-        am.putExtra("state", on);
-        this.sendBroadcast(am);
-        Toast.makeText(activity, "Turning flight mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
-    }
 
     private void setSilentMode(boolean on) {
         AudioManager am = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
@@ -126,6 +121,16 @@ public class LetMeSleepActivity extends Activity {
         } else {
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         }
+        Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setFlightMode(boolean on) {
+        Settings.System.putInt(this.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, on ? 1 : 0);
+
+        Intent intent = new Intent(Intent.ACTION_AIRPLANE_MODE_CHANGED);
+        intent.putExtra("state", !on);
+        sendBroadcast(intent);
+
         Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
     }
 
