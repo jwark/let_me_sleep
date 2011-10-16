@@ -4,8 +4,7 @@
      a row, here set to be vertical (so the first is at the top) -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="fill_parent"
-    android:orientation="vertical">
+    android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical">
 
     <!-- First view is a text editor.  We want it to use all available
          horizontal space, and stretch to fill whatever vertical space
@@ -19,13 +18,30 @@
         android:layout_width="wrap_content" android:layout_height="wrap_content"
         android:layout_gravity="center_vertical" android:gravity="center_horizontal"
         android:orientation="horizontal"
-        android:background="@drawable/semi_black">
+        android:background="@drawable/semi_black" android:weightSum="1">
 
-        <Button android:id="@+id/back" style="@style/ActionButton"
+        <Button android:id="@+id/back" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
             android:text="@string/back" />
 
-        <Button android:id="@+id/sleep" style="@style/ActionButton"
+        <Button android:id="@+id/sleep" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
             android:text="@string/sleep" />
+        
+    </LinearLayout>
+    
+    <LinearLayout android:id="@+id/linearLayout1" 
+    android:layout_height="wrap_content" 
+    android:layout_width="fill_parent" 
+    android:orientation="vertical">
+
+        <TextView android:id="@+id/authorTextView"
+            android:textAppearance="?android:attr/textAppearanceSmall" 
+            android:layout_height="wrap_content" 
+            android:layout_width="wrap_content" 
+            android:text="by Justin Wark" />
 
     </LinearLayout>
 
