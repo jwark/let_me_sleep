@@ -6,8 +6,7 @@
 <resources>
     <!-- Simple strings. -->
     <string name="letmesleep_app">Let Me Sleep!</string>
-    <string name="back">Back</string>
-    <string name="sleep">Sleep!</string>
+    <string name="sleep">Go to Sleep!</string>
     <string name="going_to_sleep">Going to Sleep!</string>
 	<string name="wake_up">Wake up!</string>
 	<string name="waking_up">Waking up!</string>

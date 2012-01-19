@@ -50,7 +50,6 @@ public class LetMeSleepActivity extends Activity {
         loadSettings();
 
         // Hook up button presses to the appropriate event handler.
-        ((Button) findViewById(R.id.back)).setOnClickListener(mBackListener);
         ((Button) findViewById(R.id.sleep)).setOnClickListener(mSleepListener);
     }
 
@@ -97,14 +96,6 @@ public class LetMeSleepActivity extends Activity {
         edit.putBoolean(SLEEPING_STATE, isSleeping());
         edit.commit();
     }
-
-    OnClickListener mBackListener = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.i(this.getClass().getName(), "onClick: back");
-            finish();
-        }
-    };
 
     Activity activity = this;
     OnClickListener mSleepListener = new OnClickListener() {
