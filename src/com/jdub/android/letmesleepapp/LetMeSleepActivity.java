@@ -41,12 +41,13 @@ public class LetMeSleepActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         Log.i(this.getClass().getName(), "onCreate");
+        super.onCreate(savedInstanceState);
 
         // Inflate our UI from its XML layout description.
         setContentView(R.layout.letmesleep_activity);
+
+        loadSettings();
 
         // Hook up button presses to the appropriate event handler.
         ((Button) findViewById(R.id.back)).setOnClickListener(mBackListener);
@@ -54,26 +55,47 @@ public class LetMeSleepActivity extends Activity {
     }
 
     @Override
-    public void onDestroy() {
-        Log.i(this.getClass().getName(), "onDestroy: isSleeping=" + isSleeping());
-        SharedPreferences settings = getSharedPreferences("LetMeSleep", MODE_PRIVATE);
-        Editor edit = settings.edit();
-        edit.putBoolean(SLEEPING_STATE, isSleeping());
-        edit.commit();
-
-        super.onDestroy();
-    }
-
-    @Override
     protected void onResume() {
         Log.i(this.getClass().getName(), "onResume");
         super.onResume();
 
+        loadSettings();
+    }
+
+    private void loadSettings() {
         SharedPreferences settings = getSharedPreferences("LetMeSleep", MODE_PRIVATE);
         if (settings.contains(SLEEPING_STATE)) {
             setSleeping(settings.getBoolean(SLEEPING_STATE, false));
-            Log.i(this.getClass().getName(), "onResume: loading sharedPrefs sleeping=" + isSleeping());
+            Log.i(this.getClass().getName(), "loading sharedPrefs sleeping=" + isSleeping());
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.i(this.getClass().getName(), "onDestroy: isSleeping=" + isSleeping());
+        saveSettings();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStop() {
+        Log.i(this.getClass().getName(), "onStop: isSleeping=" + isSleeping());
+        saveSettings();
+        super.onStop();
+    }
+
+    @Override
+    public void onPause() {
+        Log.i(this.getClass().getName(), "onPause: isSleeping=" + isSleeping());
+        saveSettings();
+        super.onPause();
+    }
+
+    private void saveSettings() {
+        SharedPreferences settings = getSharedPreferences("LetMeSleep", MODE_PRIVATE);
+        Editor edit = settings.edit();
+        edit.putBoolean(SLEEPING_STATE, isSleeping());
+        edit.commit();
     }
 
     OnClickListener mBackListener = new OnClickListener() {
@@ -121,7 +143,7 @@ public class LetMeSleepActivity extends Activity {
         } else {
             am.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         }
-        Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
     }
 
     private void setFlightMode(boolean on) {
@@ -131,7 +153,7 @@ public class LetMeSleepActivity extends Activity {
         intent.putExtra("state", !on);
         sendBroadcast(intent);
 
-        Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(activity, "Turning silent mode: " + onOrOffText(on), Toast.LENGTH_SHORT).show();
     }
 
     private void setSleepingStatusBarNotification(boolean on) {
